@@ -5,8 +5,8 @@
   "private": true,
   "scripts": {
     "dev": "nodemon --watch src --exec bun src/index.ts",
-    "build": "bun prisma generate",
-    "postinstall": "bun prisma generate",
+    "build": "npx prisma generate",
+    "postinstall": "npx prisma generate",
     "start": "bun src/index.ts"
   },
   "devDependencies": {
