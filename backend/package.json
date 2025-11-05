@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "dev": "nodemon --watch src --exec bun src/index.ts",
-    "start": "bun src/index.ts"
+    "start": "bunx prisma generate && bun src/index.ts"
   },
   "devDependencies": {
     "@types/bun": "latest",
