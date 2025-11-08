@@ -28,7 +28,7 @@ function UserDropdown({ isMenuOpen, setIsMenuOpen }: UserDropdownProps) {
             <Button variant="ghost" size="icon" className="rounded-full">
               <Avatar className="w-10 h-10">
                 <AvatarImage
-                  src={user?.profilePhoto || ""}
+                  src={user?.profilePicture || ""}
                   alt={user?.name || "Profile"}
                 />
                 <AvatarFallback className="text-xs">
