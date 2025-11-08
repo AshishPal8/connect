@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useEffect, useState } from "react";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
@@ -34,14 +34,21 @@ import {
 } from "@/components/ui/input-otp";
 import { handleError } from "@/lib/handleError";
 import { useUserStore } from "@/store/userStore";
+import { useDebounce } from "use-debounce";
+import { AlertCircle, CheckCircle, LoaderCircle } from "lucide-react";
 
 export const signupSchema = z.object({
+  username: z.string().min(1, { message: "username is required" }),
   name: z.string().min(1, { message: "Name is required" }),
   email: z.email({ message: "Enter a valid email" }),
   code: z.string().optional(),
 });
 
 export default function SignupForm() {
+  const [usernameStatus, setUsernameStatus] = useState<{
+    checking: boolean;
+    exists: boolean | null;
+  }>({ checking: false, exists: null });
   const [isLoading, setIsLoading] = useState(false);
   const [step, setStep] = useState<"form" | "otp">("form");
   const [tempCode, setTempCode] = useState("");
@@ -51,13 +58,43 @@ export default function SignupForm() {
 
   const form = useForm<z.infer<typeof signupSchema>>({
     resolver: zodResolver(signupSchema),
-    defaultValues: { name: "", email: "", code: "" },
+    defaultValues: { username: "", name: "", email: "", code: "" },
   });
+
+  const username = form.watch("username");
+  const debouncedUsername = useDebounce(username || "", 500)[0];
+
+  useEffect(() => {
+    const checkUsername = async () => {
+      if (!debouncedUsername || debouncedUsername.length < 3) {
+        setUsernameStatus({ checking: false, exists: null });
+        return;
+      }
+
+      console.log("username", debouncedUsername);
+      setUsernameStatus({ checking: true, exists: null });
+      try {
+        const res = await api.post(
+          `/auth/check-username?u=${debouncedUsername}`
+        );
+        const data = res.data;
+
+        if (data.success) {
+          setUsernameStatus({ checking: false, exists: data.exists });
+        }
+      } catch (error) {
+        handleError(error);
+        setUsernameStatus({ checking: false, exists: null });
+      }
+    };
+    checkUsername();
+  }, [debouncedUsername]);
 
   async function handleRequestOtp(values: z.infer<typeof signupSchema>) {
     setIsLoading(true);
     try {
       const response = await api.post("/auth/register", {
+        username: values.username,
         name: values.name,
         email: values.email,
       });
@@ -152,6 +189,57 @@ export default function SignupForm() {
               >
                 {step === "form" && (
                   <>
+                    <FormField
+                      control={form.control}
+                      name="username"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Username</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="Enter your username"
+                              {...field}
+                            />
+                          </FormControl>
+                          {username && username.length >= 3 && (
+                            <div className="flex items-center gap-2 mx-1">
+                              {usernameStatus.checking ? (
+                                <>
+                                  <LoaderCircle
+                                    size={12}
+                                    className="animate-spin text-blue-500"
+                                  />
+                                  <p className="text-xs font-bold text-blue-500">
+                                    Checking availability...
+                                  </p>
+                                </>
+                              ) : usernameStatus.exists === true ? (
+                                <>
+                                  <AlertCircle
+                                    size={12}
+                                    className="text-red-500"
+                                  />
+                                  <p className="text-xs font-bold text-red-500">
+                                    Username already taken
+                                  </p>
+                                </>
+                              ) : usernameStatus.exists === false ? (
+                                <>
+                                  <CheckCircle
+                                    size={12}
+                                    className="text-green-500"
+                                  />
+                                  <p className="text-xs font-bold text-green-500">
+                                    Username available
+                                  </p>
+                                </>
+                              ) : null}
+                            </div>
+                          )}
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
                     <FormField
                       control={form.control}
                       name="name"

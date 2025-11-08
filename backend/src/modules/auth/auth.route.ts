@@ -1,5 +1,6 @@
 import { Router } from "express";
 import {
+  checkUsernameExistsController,
   loginController,
   registerController,
   resendOtpController,
@@ -16,6 +17,7 @@ import {
 
 const router = Router();
 
+router.post("/check-username", checkUsernameExistsController);
 router.post("/register", validateRequest(registerSchema), registerController);
 router.post("/verify", validateRequest(verifyOtpSchema), verifyOtpController);
 router.post("/login", validateRequest(loginSchema), loginController);

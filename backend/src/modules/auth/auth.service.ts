@@ -11,9 +11,22 @@ import type {
 } from "./auth.schema";
 import { getAssetUrl } from "../../utils/getAssetUrl";
 
+//check username exists
+export const checkUsernameExistsService = async (username: string) => {
+  const user = await prisma.user.findUnique({
+    where: { username },
+    select: { id: true },
+  });
+
+  return {
+    success: true,
+    exists: Boolean(user),
+  };
+};
+
 //register
 export const registerService = async (data: registerInput) => {
-  const { name, email } = data;
+  const { username, name, email } = data;
   if (!email) {
     throw new BadRequestError("Email is required");
   }
@@ -27,7 +40,7 @@ export const registerService = async (data: registerInput) => {
   const defualtImage = getAssetUrl("profile/default.jpg");
 
   const user = await prisma.user.create({
-    data: { name, email, profilePicture: defualtImage },
+    data: { username, name, email, profilePicture: defualtImage },
   });
 
   const code = generateOtp();
@@ -86,6 +99,7 @@ export const verifyOtpService = async (data: verifyOtpInput) => {
     data: {
       id: user.id,
       name: user.name,
+      profilePicture: user.profilePicture,
       email: user.email,
       isVerified: user.isVerified,
       token,
@@ -171,6 +185,7 @@ export const verifyLoginOtpService = async (data: verifyOtpInput) => {
     data: {
       id: user.id,
       name: user.name,
+      profilePicture: user.profilePicture,
       email: user.email,
       isVerified: user.isVerified,
       token,

@@ -4,7 +4,7 @@ import { persist, createJSONStorage } from "zustand/middleware";
 interface User {
   name: string | null;
   email: string | null;
-  profilePhoto: string | null;
+  profilePicture: string | null;
 }
 
 interface UserState {

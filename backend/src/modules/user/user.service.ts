@@ -1,3 +1,4 @@
+import type { SocialType } from "../../generated/prisma";
 import { getRandomAvatarUrl } from "../../utils/avatar";
 import { BadRequestError, NotFoundError } from "../../utils/error";
 import { prisma } from "../../utils/prisma";
@@ -56,7 +57,8 @@ export const updateUserService = async (
   userId: number,
   data: updateUserInput
 ) => {
-  const { name, phone, profilePicture, dob, gender, bio, interests } = data;
+  const { name, phone, profilePicture, dob, gender, bio, interests, socials } =
+    data;
 
   const interestIds = interests ? Array.from(new Set(interests)) : undefined;
 
@@ -72,6 +74,49 @@ export const updateUserService = async (
       await tx.userInterest.deleteMany({ where: { userId } });
       const rows = interestIds.map((interestId) => ({ userId, interestId }));
       await tx.userInterest.createMany({ data: rows, skipDuplicates: true });
+    }
+
+    if (socials && socials.length) {
+      const normalized = socials
+        .map((s) => ({
+          type: s.type.trim().toUpperCase() as SocialType,
+          url: s.url.trim(),
+        }))
+        .filter(
+          (s, i, arr) =>
+            s.type && s.url && arr.findIndex((a) => a.type === s.type) === i
+        );
+
+      const types: SocialType[] = normalized.map((s) => s.type);
+      if (types.length > 0) {
+        await tx.socials.deleteMany({
+          where: {
+            userId,
+            type: { notIn: types },
+          },
+        });
+
+        for (const s of normalized) {
+          await tx.socials.upsert({
+            where: {
+              userId_type: {
+                userId,
+                type: s.type,
+              },
+            },
+            update: {
+              url: s.url,
+            },
+            create: {
+              userId,
+              type: s.type,
+              url: s.url,
+            },
+          });
+        }
+      } else {
+        await tx.socials.deleteMany({ where: { userId } });
+      }
     }
 
     const toUpdate: any = {};
@@ -92,6 +137,7 @@ export const updateUserService = async (
       data: toUpdate,
       include: {
         UserInterest: { include: { interest: true } },
+        Socials: true,
       },
     });
 
@@ -100,10 +146,16 @@ export const updateUserService = async (
 
   const formattedUser = {
     id: user.id,
+    name: user.name,
     interests: user.UserInterest.map((ui) => ({
       id: ui.interest.id,
       title: ui.interest.title,
       slug: ui.interest.slug,
+    })),
+    socials: user.Socials.map((s) => ({
+      id: s.id,
+      type: s.type,
+      url: s.url,
     })),
     createdAt: user.createdAt,
   };
