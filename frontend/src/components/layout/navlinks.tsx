@@ -14,7 +14,7 @@ function NavLinks() {
           className={`hover:text-primary font-medium transition-colors ${
             pathname === nav.href
               ? "text-primary font-extrabold"
-              : "text-gray-800"
+              : "text-foreground"
           }`}
         >
           {nav.title}

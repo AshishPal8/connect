@@ -10,6 +10,7 @@ import type {
   verifyOtpInput,
 } from "./auth.schema";
 import { getAssetUrl } from "../../utils/getAssetUrl";
+import { generateToken } from "../../utils/auth";
 
 //check username exists
 export const checkUsernameExistsService = async (username: string) => {
@@ -89,8 +90,12 @@ export const verifyOtpService = async (data: verifyOtpInput) => {
     where: { email },
     data: { isVerified: true },
   });
-  const token = jwt.sign({ id: user.id, email }, jwtSecret, {
-    expiresIn: "30d",
+
+  const token = generateToken({
+    id: user.id,
+    email: user.email,
+    username: user.username,
+    isOnboarded: user.isOnboarded,
   });
 
   return {
@@ -102,6 +107,7 @@ export const verifyOtpService = async (data: verifyOtpInput) => {
       profilePicture: user.profilePicture,
       email: user.email,
       isVerified: user.isVerified,
+      isOnboarded: user.isOnboarded,
       token,
     },
   };
@@ -175,8 +181,11 @@ export const verifyLoginOtpService = async (data: verifyOtpInput) => {
     throw new NotFoundError("User not fount!");
   }
 
-  const token = jwt.sign({ id: user.id, email }, jwtSecret, {
-    expiresIn: "30d",
+  const token = generateToken({
+    id: user.id,
+    email: user.email,
+    username: user.username,
+    isOnboarded: user.isOnboarded,
   });
 
   return {
@@ -188,6 +197,7 @@ export const verifyLoginOtpService = async (data: verifyOtpInput) => {
       profilePicture: user.profilePicture,
       email: user.email,
       isVerified: user.isVerified,
+      isOnboarded: user.isOnboarded,
       token,
     },
   };

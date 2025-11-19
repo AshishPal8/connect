@@ -26,16 +26,19 @@ export const updateUserSchema = z.object({
   ),
   dob: coerceToDate.optional(),
   gender: genderEnum.optional(),
+  isOnboarded: z.boolean().default(false),
   bio: z.string().max(2000).optional(),
   interests: z.array(interestId).max(200).optional(),
-  socials: z.array(
-    z.object({
-      type: socialTypeEnum,
-      url: z
-        .url({ error: "Invalid url format" })
-        .max(500, { error: "URL to long" }),
-    })
-  ),
+  socials: z
+    .array(
+      z.object({
+        type: socialTypeEnum,
+        url: z
+          .url({ error: "Invalid url format" })
+          .max(500, { error: "URL to long" }),
+      })
+    )
+    .optional(),
 });
 
 export type updateUserInput = z.infer<typeof updateUserSchema>;

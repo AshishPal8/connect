@@ -2,6 +2,7 @@ import type { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import { jwtSecret } from "../utils/index.ts";
 import { ForbiddenError } from "../utils/error.ts";
+import { verifyToken } from "../utils/auth.ts";
 
 export const authMiddleware = (
   req: Request,
@@ -22,23 +23,30 @@ export const authMiddleware = (
       return reject();
     }
 
-    try {
-      const decoded = jwt.verify(token, jwtSecret);
+    // try {
+    //   const decoded = jwt.verify(token, jwtSecret);
 
-      if (typeof decoded === "string" || !("id" in decoded)) {
-        throw new ForbiddenError("Invalid token payload");
-      }
+    //   if (typeof decoded === "string" || !("id" in decoded)) {
+    //     throw new ForbiddenError("Invalid token payload");
+    //   }
 
-      req.user = {
-        id: decoded.id,
-        email: decoded.email,
-      };
+    //   req.user = {
+    //     id: decoded.id,
+    //     email: decoded.email,
+    //   };
 
-      next();
-      resolve();
-    } catch (error) {
-      res.status(400).json({ message: "Invalid or expired token" });
-      reject();
+    //   next();
+    //   resolve();
+    // } catch (error) {
+    //   res.status(400).json({ message: "Invalid or expired token" });
+    //   reject();
+    // }
+
+    const decoded = verifyToken(token);
+    if (!decoded) {
+      throw new ForbiddenError("Invalid or expired token");
     }
+
+    req.user = decoded;
   });
 };

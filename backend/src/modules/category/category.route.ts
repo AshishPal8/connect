@@ -11,7 +11,7 @@ import { interestByCategorySchema } from "./category.schema";
 const router = Router();
 
 router.get("/", authMiddleware, getCategoryController);
+router.get("/seed", seedCategoryController);
 router.post("/interests", authMiddleware, interestByCategoryController);
-router.post("/seed", seedCategoryController);
 
 export default router;

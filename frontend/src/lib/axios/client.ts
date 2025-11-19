@@ -1,8 +1,9 @@
 import axios, { AxiosError, AxiosInstance } from "axios";
 import { useUserStore } from "@/store/userStore";
+import { baseUrl } from "..";
 
 const api: AxiosInstance = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:4000/api",
+  baseURL: baseUrl,
   withCredentials: true,
   timeout: 10000,
   headers: {

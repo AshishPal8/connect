@@ -4,6 +4,7 @@ import { BadRequestError, NotFoundError } from "../../utils/error";
 import { prisma } from "../../utils/prisma";
 import type { updateUserInput } from "./user.schema";
 
+//by id
 export const getUserService = async (userId: number) => {
   const user = await prisma.user.findUnique({
     where: { id: userId },
@@ -53,12 +54,72 @@ export const getUserService = async (userId: number) => {
   };
 };
 
+//by username
+export const getUserByUsernameService = async (username: string) => {
+  const user = await prisma.user.findUnique({
+    where: { username },
+    include: {
+      UserInterest: {
+        include: {
+          interest: {
+            include: {
+              category: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  if (!user) {
+    throw new NotFoundError("User not found!");
+  }
+
+  const formattedUser = {
+    id: user.id,
+    name: user.name,
+    email: user.email,
+    profilePicture: user.profilePicture,
+    bio: user.bio,
+    gender: user.gender,
+    isVerified: user.isVerified,
+    interests: user.UserInterest.map((ui) => ({
+      id: ui.interest.id,
+      title: ui.interest.title,
+      slug: ui.interest.slug,
+      category: {
+        id: ui.interest.category.id,
+        title: ui.interest.category.title,
+        slug: ui.interest.category.slug,
+      },
+    })),
+    createdAt: user.createdAt,
+    updatedAt: user.updatedAt,
+  };
+
+  return {
+    success: true,
+    message: "User fetched successfully",
+    data: formattedUser,
+  };
+};
+
+//update user
 export const updateUserService = async (
   userId: number,
   data: updateUserInput
 ) => {
-  const { name, phone, profilePicture, dob, gender, bio, interests, socials } =
-    data;
+  const {
+    name,
+    phone,
+    profilePicture,
+    dob,
+    gender,
+    isOnboarded,
+    bio,
+    interests,
+    socials,
+  } = data;
 
   const interestIds = interests ? Array.from(new Set(interests)) : undefined;
 
@@ -130,6 +191,7 @@ export const updateUserService = async (
     if (typeof gender !== "undefined") toUpdate.gender = gender;
     if (typeof dob !== "undefined") toUpdate.dob = dob;
     if (typeof bio !== "undefined") toUpdate.bio = bio;
+    if (typeof isOnboarded != "undefined") toUpdate.isOnboarded = isOnboarded;
     toUpdate.updatedAt = new Date();
 
     const updatedUser = await tx.user.update({

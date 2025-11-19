@@ -8,6 +8,7 @@ import {
   verifyOtpService,
 } from "./auth.service";
 import { BadRequestError } from "../../utils/error";
+import { setAuthCookie } from "../../utils/auth";
 
 export const checkUsernameExistsController = async (
   req: Request,
@@ -50,13 +51,7 @@ export const verifyOtpController = async (
   try {
     const user = await verifyOtpService(req.body);
 
-    res.cookie("token", user.data.token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-      path: "/",
-    });
+    setAuthCookie(res, user.data.token);
 
     res.status(200).json(user);
   } catch (error) {
@@ -86,13 +81,7 @@ export const verifyLoginController = async (
   try {
     const user = await verifyLoginOtpService(req.body);
 
-    res.cookie("token", user.data.token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-      path: "/",
-    });
+    setAuthCookie(res, user.data.token);
 
     res.status(200).json(user);
   } catch (error) {
