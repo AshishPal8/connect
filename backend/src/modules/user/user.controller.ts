@@ -1,6 +1,10 @@
 import type { NextFunction, Request, Response } from "express";
-import { getUserService, updateUserService } from "./user.service";
-import { UnauthorizedError } from "../../utils/error";
+import {
+  getUserByUsernameService,
+  getUserService,
+  updateUserService,
+} from "./user.service";
+import { BadRequestError, UnauthorizedError } from "../../utils/error";
 
 export const getUserController = async (
   req: Request,
@@ -21,6 +25,23 @@ export const getUserController = async (
   }
 };
 
+export const getUserByUsernameController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const username = req.params?.username;
+    if (!username) {
+      throw new BadRequestError("username is required!");
+    }
+    const user = await getUserByUsernameService(username);
+
+    res.status(200).json(user);
+  } catch (error) {
+    next(error);
+  }
+};
 export const updateUserController = async (
   req: Request,
   res: Response,

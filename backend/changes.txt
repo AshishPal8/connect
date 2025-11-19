@@ -1,11 +1,14 @@
-1. when udpate user check if it has already profile pic if it then dont change,
-2. Create api of category and interests, 
-3. start onboarding page ui after login /onboarding.
+1. ✅when udpate user check if it has already profile pic if it then dont change,
+2. ✅Create api of category and interests, 
+3. ✅start onboarding page ui after login /onboarding.
 
 26-10-2025 - sunday
-4. fix cookie or authenticaiton error middleware, 
-5. onboading screen done,
-6. header and footer
+4. ✅fix cookie or authenticaiton error middleware, 
+5. ✅onboading screen done,
+6. ✅header and footer
+
+7. need to add username in jwt token 
 
 profile status in user account if it not have interests then go onboarding or onboarded: true or false, then dont show that page.
 push code to github and make a url render and vercel.
+

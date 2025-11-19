@@ -50,8 +50,8 @@ export function Header() {
     <div className="relative">
       <header
         className={cn(
-          "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
-          isTop ? "bg-transparent backdrop-blur-sm" : "bg-white shadow-md",
+          "fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b",
+          isTop ? "bg-transparent backdrop-blur-sm" : "bg-background shadow-md",
           showHeader ? "translate-y-0" : "-translate-y-full"
         )}
       >

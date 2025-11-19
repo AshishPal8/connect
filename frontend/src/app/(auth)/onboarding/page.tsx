@@ -22,7 +22,7 @@ import {
 } from "@/components/ui/card";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import api from "@/lib/axios";
+import api from "@/lib/axios/client";
 
 import { handleError } from "@/lib/handleError";
 import { useUserStore } from "@/store/userStore";
@@ -134,6 +134,7 @@ export default function Onboarding() {
       const payload = {
         gender: values.gender,
         date: values.date ? new Date(values.date).toISOString() : undefined,
+        isOnboarded: true,
         interests: values.interests,
       };
 

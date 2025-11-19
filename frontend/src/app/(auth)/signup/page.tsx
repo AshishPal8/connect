@@ -26,7 +26,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Separator } from "@/components/ui/separator";
 import OAuth from "@/components/auth/oauth";
-import api from "@/lib/axios";
+import api from "@/lib/axios/client";
 import {
   InputOTP,
   InputOTPGroup,
@@ -315,7 +315,7 @@ export default function SignupForm() {
                   size="lg"
                   type="submit"
                   className="w-full"
-                  disabled={isLoading}
+                  disabled={isLoading || usernameStatus.exists === true}
                 >
                   {step === "form" ? "Next" : "Verify & Register"}
                 </Button>

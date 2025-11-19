@@ -26,7 +26,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Separator } from "@/components/ui/separator";
 import OAuth from "@/components/auth/oauth";
-import api from "@/lib/axios";
+import api from "@/lib/axios/client";
 import {
   InputOTP,
   InputOTPGroup,
