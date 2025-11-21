@@ -8,6 +8,7 @@
 6. ✅header and footer
 
 7. need to add username in jwt token 
+8. update profile frontend right side of profile card scrolling.
 
 profile status in user account if it not have interests then go onboarding or onboarded: true or false, then dont show that page.
 push code to github and make a url render and vercel.

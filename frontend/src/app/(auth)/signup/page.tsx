@@ -71,7 +71,6 @@ export default function SignupForm() {
         return;
       }
 
-      console.log("username", debouncedUsername);
       setUsernameStatus({ checking: true, exists: null });
       try {
         const res = await api.post(

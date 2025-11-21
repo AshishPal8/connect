@@ -15,7 +15,7 @@ router.get("/get/:username", getUserByUsernameController);
 router.put(
   "/update",
   authMiddleware,
-  validateRequest(updateUserSchema),
+  // validateRequest(updateUserSchema),
   updateUserController
 );
 

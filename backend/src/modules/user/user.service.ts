@@ -18,6 +18,7 @@ export const getUserService = async (userId: number) => {
           },
         },
       },
+      Socials: true,
     },
   });
 
@@ -42,6 +43,11 @@ export const getUserService = async (userId: number) => {
         title: ui.interest.category.title,
         slug: ui.interest.category.slug,
       },
+    })),
+    socials: user.Socials.map((s) => ({
+      id: s.id,
+      type: s.type,
+      url: s.url,
     })),
     createdAt: user.createdAt,
     updatedAt: user.updatedAt,
@@ -68,6 +74,7 @@ export const getUserByUsernameService = async (username: string) => {
           },
         },
       },
+      Socials: true,
     },
   });
 
@@ -92,6 +99,11 @@ export const getUserByUsernameService = async (username: string) => {
         title: ui.interest.category.title,
         slug: ui.interest.category.slug,
       },
+    })),
+    socials: user.Socials.map((s) => ({
+      id: s.id,
+      type: s.type,
+      url: s.url,
     })),
     createdAt: user.createdAt,
     updatedAt: user.updatedAt,
@@ -184,9 +196,11 @@ export const updateUserService = async (
     if (typeof name !== "undefined") toUpdate.name = name;
     if (typeof phone !== "undefined") toUpdate.phone = phone;
     if (typeof profilePicture !== "undefined") {
-      toUpdate.profilePicture = profilePicture || null;
-    } else {
-      toUpdate.profilePicture = getRandomAvatarUrl(gender as any);
+      if (profilePicture === null || profilePicture === "") {
+        toUpdate.profilePicture = getRandomAvatarUrl(gender as any);
+      } else {
+        toUpdate.profilePicture = profilePicture;
+      }
     }
     if (typeof gender !== "undefined") toUpdate.gender = gender;
     if (typeof dob !== "undefined") toUpdate.dob = dob;

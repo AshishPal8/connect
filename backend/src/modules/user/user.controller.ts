@@ -13,7 +13,6 @@ export const getUserController = async (
 ): Promise<void> => {
   try {
     const userId = req.user?.id;
-    console.log("User Id", userId);
     if (!userId) {
       throw new UnauthorizedError("Unauthorized");
     }
@@ -48,6 +47,7 @@ export const updateUserController = async (
   next: NextFunction
 ): Promise<void> => {
   try {
+    console.log("Hello thhere");
     const userId = req.user?.id;
     if (!userId) {
       throw new UnauthorizedError("Unauthorized");

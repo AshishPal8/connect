@@ -2,6 +2,7 @@ import { Router } from "express";
 import {
   checkUsernameExistsController,
   loginController,
+  logoutController,
   registerController,
   resendOtpController,
   verifyLoginController,
@@ -27,5 +28,6 @@ router.post(
   verifyLoginController
 );
 router.post("/resend", validateRequest(resendOtpSchema), resendOtpController);
+router.post("/logout", logoutController);
 
 export default router;

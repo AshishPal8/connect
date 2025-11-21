@@ -7,5 +7,19 @@ export interface User {
   avatar?: string;
   isOnboarded: boolean;
   profilePicture: string;
+  interests: Interest[];
+  socials: Social[];
   createdAt: string;
+}
+
+export interface Interest {
+  id: number;
+  title: string;
+  slug: string;
+}
+
+export interface Social {
+  id: number;
+  type: string;
+  url: string;
 }

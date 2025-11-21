@@ -13,14 +13,12 @@ const UserPage = async ({
 
   const user = await getUserProfile(username, true);
 
-  console.log("User", user);
-
   if (!user) {
     return notFound();
   }
 
   return (
-    <div className="container mx-auto min-h-screen mt-32">
+    <div className="container mx-auto min-h-[70vh] my-32">
       <div className="w-1/3">
         <ProfileCard user={user} />
       </div>

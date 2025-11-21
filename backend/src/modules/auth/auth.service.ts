@@ -104,6 +104,7 @@ export const verifyOtpService = async (data: verifyOtpInput) => {
     data: {
       id: user.id,
       name: user.name,
+      username: user.username,
       profilePicture: user.profilePicture,
       email: user.email,
       isVerified: user.isVerified,
@@ -194,6 +195,7 @@ export const verifyLoginOtpService = async (data: verifyOtpInput) => {
     data: {
       id: user.id,
       name: user.name,
+      username: user.username,
       profilePicture: user.profilePicture,
       email: user.email,
       isVerified: user.isVerified,

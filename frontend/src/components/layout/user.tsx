@@ -11,6 +11,9 @@ import { LayoutDashboard, Menu } from "lucide-react";
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { useUserStore } from "@/store/userStore";
+import api from "@/lib/axios/client";
+import { handleError } from "@/lib/handleError";
+import { useRouter } from "next/navigation";
 
 interface UserDropdownProps {
   isMenuOpen: boolean;
@@ -19,6 +22,19 @@ interface UserDropdownProps {
 
 function UserDropdown({ isMenuOpen, setIsMenuOpen }: UserDropdownProps) {
   const { user } = useUserStore();
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    try {
+      const res = await api.post("/auth/logout");
+      if (res.status === 200) {
+        useUserStore.setState({ user: null, token: null });
+      }
+      router.push("/signin");
+    } catch (error) {
+      handleError(error);
+    }
+  };
 
   return (
     <div className="flex items-center space-x-6">
@@ -38,7 +54,10 @@ function UserDropdown({ isMenuOpen, setIsMenuOpen }: UserDropdownProps) {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <Link href="/profile" className="cursor-pointer">
+            <Link
+              href={`/profile/${user?.username}`}
+              className="cursor-pointer"
+            >
               <DropdownMenuItem>{user?.name}</DropdownMenuItem>
             </Link>
             <DropdownMenuItem asChild>
@@ -51,7 +70,7 @@ function UserDropdown({ isMenuOpen, setIsMenuOpen }: UserDropdownProps) {
               </Link>
             </DropdownMenuItem>
 
-            <DropdownMenuItem onClick={() => {}} className="cursor-pointer">
+            <DropdownMenuItem onClick={handleLogout} className="cursor-pointer">
               Sign Out
             </DropdownMenuItem>
           </DropdownMenuContent>
