@@ -8,7 +8,7 @@ import {
   verifyOtpService,
 } from "./auth.service";
 import { BadRequestError } from "../../utils/error";
-import { setAuthCookie } from "../../utils/auth";
+import { clearAuthCookie, setAuthCookie } from "../../utils/auth";
 
 export const checkUsernameExistsController = async (
   req: Request,
@@ -98,6 +98,20 @@ export const resendOtpController = async (
     const otp = await resendOtpService(req.body);
 
     res.status(200).json(otp);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const logoutController = async (
+  _req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    clearAuthCookie(res);
+
+    res.status(200).json({ message: "Logout successful!" });
   } catch (error) {
     next(error);
   }

@@ -5,6 +5,9 @@ interface User {
   name: string | null;
   email: string | null;
   profilePicture: string | null;
+  username: string | null;
+  isVerified: boolean | null;
+  isOnboarded: boolean | null;
 }
 
 interface UserState {
@@ -12,7 +15,7 @@ interface UserState {
   token: string | null;
   setUser: (user: User) => void;
   setToken: (token: string) => void;
-  clearUser: () => void;
+  logout: () => void;
 }
 
 export const useUserStore = create<UserState>()(
@@ -22,7 +25,7 @@ export const useUserStore = create<UserState>()(
       token: null,
       setUser: (user) => set({ user }),
       setToken: (token) => set({ token }),
-      clearUser: () => set({ user: null, token: null }),
+      logout: () => set({ user: null, token: null }),
     }),
     {
       name: "user-storage",

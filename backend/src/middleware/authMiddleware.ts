@@ -16,8 +16,6 @@ export const authMiddleware = (
       token = req.headers.authorization.split(" ")[1];
     }
 
-    console.log("token hello", token);
-
     if (!token) {
       res.status(401).json({ message: "Unauthorized" });
       return reject();
@@ -48,5 +46,7 @@ export const authMiddleware = (
     }
 
     req.user = decoded;
+    next();
+    resolve();
   });
 };
