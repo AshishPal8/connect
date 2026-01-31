@@ -8,5 +8,5 @@ const port = process.env.PORT;
 const server = createServer(app);
 
 server.listen(port, () => {
-  console.log(`🚀 App is running on http://localhost:${port}`);
+  console.log(`App is running on http://localhost:${port}`);
 });

@@ -11,25 +11,31 @@ const api: AxiosInstance = axios.create({
   },
 });
 
-api.interceptors.request.use(
-  (config) => {
-    const token = useUserStore.getState().token;
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
+// api.interceptors.request.use(
+//   (config) => {
+//     const token = useUserStore.getState().token;
+//     if (token) {
+//       config.headers.Authorization = `Bearer ${token}`;
+//     }
 
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
+//     return config;
+//   },
+//   (error) => {
+//     return Promise.reject(error);
+//   }
+// );
 
 api.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {
     if (error.response?.status === 401) {
       console.warn("Unauthorized: redirecting or refreshing token...");
+
+      useUserStore.getState().logout();
+
+      if (typeof window !== "undefined") {
+        window.location.href = "/signin";
+      }
 
       // Optional: Try token refresh logic here
       // Example:

@@ -1,5 +1,4 @@
 import { User } from "@/types/user";
-import { handleError } from "../handleError";
 import api from "../axios/client";
 import { createServerAxios } from "../axios/server";
 

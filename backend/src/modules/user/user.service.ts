@@ -85,6 +85,7 @@ export const getUserByUsernameService = async (username: string) => {
   const formattedUser = {
     id: user.id,
     name: user.name,
+    username: user.username,
     email: user.email,
     profilePicture: user.profilePicture,
     bio: user.bio,
