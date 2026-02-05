@@ -1,4 +1,5 @@
 import type { SocialType } from "../../generated/prisma";
+import { generateToken } from "../../utils/auth";
 import { getRandomAvatarUrl } from "../../utils/avatar";
 import { BadRequestError, NotFoundError } from "../../utils/error";
 import { prisma } from "../../utils/prisma";
@@ -32,7 +33,9 @@ export const getUserService = async (userId: number) => {
     email: user.email,
     profilePicture: user.profilePicture,
     bio: user.bio,
+    dob: user.dob,
     gender: user.gender,
+    location: user.location,
     isVerified: user.isVerified,
     interests: user.UserInterest.map((ui) => ({
       id: ui.interest.id,
@@ -89,8 +92,10 @@ export const getUserByUsernameService = async (username: string) => {
     email: user.email,
     profilePicture: user.profilePicture,
     bio: user.bio,
+    dob: user.dob,
     gender: user.gender,
     isVerified: user.isVerified,
+    location: user.location,
     interests: user.UserInterest.map((ui) => ({
       id: ui.interest.id,
       title: ui.interest.title,
@@ -120,7 +125,7 @@ export const getUserByUsernameService = async (username: string) => {
 //update user
 export const updateUserService = async (
   userId: number,
-  data: updateUserInput
+  data: updateUserInput,
 ) => {
   const {
     name,
@@ -128,6 +133,7 @@ export const updateUserService = async (
     profilePicture,
     dob,
     gender,
+    location,
     isOnboarded,
     bio,
     interests,
@@ -158,7 +164,7 @@ export const updateUserService = async (
         }))
         .filter(
           (s, i, arr) =>
-            s.type && s.url && arr.findIndex((a) => a.type === s.type) === i
+            s.type && s.url && arr.findIndex((a) => a.type === s.type) === i,
         );
 
       const types: SocialType[] = normalized.map((s) => s.type);
@@ -204,9 +210,12 @@ export const updateUserService = async (
       }
     }
     if (typeof gender !== "undefined") toUpdate.gender = gender;
+    if (typeof location !== "undefined") toUpdate.location = location;
     if (typeof dob !== "undefined") toUpdate.dob = dob;
     if (typeof bio !== "undefined") toUpdate.bio = bio;
-    if (typeof isOnboarded != "undefined") toUpdate.isOnboarded = isOnboarded;
+    if (isOnboarded === true) {
+      toUpdate.isOnboarded = true;
+    }
     toUpdate.updatedAt = new Date();
 
     const updatedUser = await tx.user.update({
@@ -224,6 +233,11 @@ export const updateUserService = async (
   const formattedUser = {
     id: user.id,
     name: user.name,
+    username: user.username,
+    profilePicture: user.profilePicture,
+    email: user.email,
+    isVerified: user.isVerified,
+    isOnboarded: user.isOnboarded,
     interests: user.UserInterest.map((ui) => ({
       id: ui.interest.id,
       title: ui.interest.title,
@@ -237,9 +251,19 @@ export const updateUserService = async (
     createdAt: user.createdAt,
   };
 
+  const token = generateToken({
+    id: user.id,
+    email: user.email,
+    username: user.username,
+    isOnboarded: user.isOnboarded,
+  });
+
   return {
     success: true,
     message: "user updated successfully",
-    data: formattedUser,
+    data: {
+      ...formattedUser,
+      token,
+    },
   };
 };

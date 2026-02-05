@@ -1,6 +1,7 @@
 import type { NextFunction, Request, Response } from "express";
 import {
   checkUsernameExistsService,
+  googleAuthService,
   loginService,
   registerService,
   resendOtpService,
@@ -98,6 +99,22 @@ export const resendOtpController = async (
     const otp = await resendOtpService(req.body);
 
     res.status(200).json(otp);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const googleAuthController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> => {
+  try {
+    const user = await googleAuthService(req.body);
+
+    setAuthCookie(res, user.data.token);
+
+    res.status(200).json(user);
   } catch (error) {
     next(error);
   }

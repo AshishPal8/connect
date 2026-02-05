@@ -5,11 +5,12 @@ import {
   updateUserService,
 } from "./user.service";
 import { BadRequestError, UnauthorizedError } from "../../utils/error";
+import { setAuthCookie } from "../../utils/auth";
 
 export const getUserController = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<void> => {
   try {
     const userId = req.user?.id;
@@ -27,7 +28,7 @@ export const getUserController = async (
 export const getUserByUsernameController = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<void> => {
   try {
     const username = req.params?.username;
@@ -41,10 +42,11 @@ export const getUserByUsernameController = async (
     next(error);
   }
 };
+
 export const updateUserController = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<void> => {
   try {
     console.log("Hello thhere");
@@ -53,6 +55,8 @@ export const updateUserController = async (
       throw new UnauthorizedError("Unauthorized");
     }
     const user = await updateUserService(userId, req.body);
+
+    setAuthCookie(res, user.data.token);
 
     res.status(200).json(user);
   } catch (error) {

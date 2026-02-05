@@ -1,9 +1,15 @@
 import { BadRequestError, NotFoundError } from "../../utils/error";
 import { generateOtp } from "../../utils/generateOtp";
 import { prisma } from "../../utils/prisma";
-import jwt from "jsonwebtoken";
-import { jwtSecret, OTP_EXPIRE_MINUTES } from "../../utils/index";
+import { OAuth2Client } from "google-auth-library";
+import {
+  GOOGLE_CLIENT_ID,
+  GOOGLE_CLIENT_SECRET,
+  jwtSecret,
+  OTP_EXPIRE_MINUTES,
+} from "../../utils/index";
 import type {
+  googleAuthInput,
   loginInput,
   registerInput,
   resendOtpInput,
@@ -11,6 +17,7 @@ import type {
 } from "./auth.schema";
 import { getAssetUrl } from "../../utils/getAssetUrl";
 import { generateToken } from "../../utils/auth";
+import axios from "axios";
 
 //check username exists
 export const checkUsernameExistsService = async (username: string) => {
@@ -245,6 +252,78 @@ export const resendOtpService = async (data: resendOtpInput) => {
     message: "OTP verified",
     data: {
       code,
+    },
+  };
+};
+
+const googleClient = new OAuth2Client(GOOGLE_CLIENT_ID);
+
+export const googleAuthService = async (data: googleAuthInput) => {
+  const { credential } = data;
+
+  if (!credential) {
+    throw new BadRequestError("Credential is required");
+  }
+
+  // const ticket = await googleClient.verifyIdToken({
+  //   idToken: credential,
+  //   audience: GOOGLE_CLIENT_ID,
+  // });
+
+  const googleResponse = await axios.get(
+    `https://www.googleapis.com/oauth2/v3/userinfo?access_token=${credential}`,
+  );
+
+  const payload = googleResponse.data;
+
+  if (!payload) {
+    throw new BadRequestError("Invalid Google credential");
+  }
+
+  const { email, name, picture, sub: googleId } = payload!;
+
+  if (!email) {
+    throw new BadRequestError("Email is required");
+  }
+
+  let user = await prisma.user.findUnique({
+    where: { email },
+  });
+
+  if (!user) {
+    const username = email.split("@")[0];
+
+    user = await prisma.user.create({
+      data: {
+        email,
+        name: name || "",
+        username: username || "user",
+        profilePicture: picture || "",
+        isVerified: true,
+        isOnboarded: false,
+      },
+    });
+  }
+
+  const token = generateToken({
+    id: user.id,
+    email: user.email,
+    username: user.username,
+    isOnboarded: user.isOnboarded,
+  });
+
+  return {
+    success: true,
+    message: "User logged in successfully",
+    data: {
+      id: user.id,
+      name: user.name,
+      username: user.username,
+      profilePicture: user.profilePicture,
+      email: user.email,
+      isVerified: user.isVerified,
+      isOnboarded: user.isOnboarded,
+      token,
     },
   };
 };

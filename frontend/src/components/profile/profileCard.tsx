@@ -1,10 +1,18 @@
 import { User } from "@/types/user";
 import { Card, CardDescription, CardHeader } from "../ui/card";
-import Image from "next/image";
+import Image, { StaticImageData } from "next/image";
 import { Separator } from "../ui/separator";
 import Link from "next/link";
 import { SquarePen } from "lucide-react";
 import Icon from "../ui/Icon";
+import {
+  facebook,
+  github,
+  instagram,
+  linkedin,
+  other,
+  twitter,
+} from "@/assets";
 
 const ProfileCard = ({ user }: { user: User }) => {
   console.log("User", user);
@@ -39,25 +47,25 @@ const ProfileCard = ({ user }: { user: User }) => {
           <h2 className="text-lg md:text-xl font-bold mb-2">Socials</h2>
           <ul className="flex flex-wrap items-center gap-5">
             {user.socials?.map((social) => {
-              let imageSrc = "";
+              let imageSrc: StaticImageData = other;
               switch (social.type.toUpperCase()) {
                 case "TWITTER":
-                  imageSrc = "/twitter.png";
+                  imageSrc = twitter;
                   break;
                 case "GITHUB":
-                  imageSrc = "/github.png";
+                  imageSrc = github;
                   break;
                 case "FACEBOOK":
-                  imageSrc = "/facebook.png";
+                  imageSrc = facebook;
                   break;
                 case "INSTAGRAM":
-                  imageSrc = "/instagram.png";
+                  imageSrc = instagram;
                   break;
                 case "LINKEDIN":
-                  imageSrc = "/linkedin.png";
+                  imageSrc = linkedin;
                   break;
                 default:
-                  imageSrc = "/internet.png";
+                  imageSrc = other;
                   break;
               }
 

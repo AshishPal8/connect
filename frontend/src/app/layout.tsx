@@ -6,6 +6,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { ThemeScript } from "@/components/theme/theme-script";
 import ThemeProvider from "@/components/theme/theme-provider";
 import { AuthSyncProvider } from "@/poviders/auth-sync-provider";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 
 const nunito = Nunito({
   variable: "--font-nunito-sans",
@@ -31,10 +32,14 @@ export default function RootLayout({
         <ThemeScript />
       </head>
       <body className={`${nunito.variable} font-sans antialiased`}>
-        <ThemeProvider>
-          <AuthSyncProvider>{children}</AuthSyncProvider>
-          <Toaster richColors={true} position="top-center" />
-        </ThemeProvider>
+        <GoogleOAuthProvider
+          clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!}
+        >
+          <ThemeProvider>
+            <AuthSyncProvider>{children}</AuthSyncProvider>
+            <Toaster richColors={true} position="top-center" />
+          </ThemeProvider>
+        </GoogleOAuthProvider>
       </body>
     </html>
   );

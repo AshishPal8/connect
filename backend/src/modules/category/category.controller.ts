@@ -9,7 +9,7 @@ import {
 export const seedCategoryController = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<void> => {
   const seed = [
     {
@@ -206,7 +206,7 @@ export const seedCategoryController = async (
                 title: it.title,
                 categoryId: category.id,
               },
-            })
+            }),
           );
 
           const createdOrUpdated = await Promise.all(upserts);
@@ -217,7 +217,7 @@ export const seedCategoryController = async (
           });
         }
       },
-      { timeout: 30_000 }
+      { timeout: 30_000 },
     );
 
     res.status(201).json({
@@ -233,7 +233,7 @@ export const seedCategoryController = async (
 export const getCategoryController = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<void> => {
   try {
     const userId = req.user?.id;
@@ -251,7 +251,7 @@ export const getCategoryController = async (
 export const interestByCategoryController = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<void> => {
   try {
     const userId = req.user?.id;

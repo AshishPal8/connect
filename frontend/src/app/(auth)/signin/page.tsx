@@ -25,7 +25,7 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Separator } from "@/components/ui/separator";
-import OAuth from "@/components/auth/oauth";
+import OAuth from "@/components/auth/OAuth";
 import api from "@/lib/axios/client";
 import {
   InputOTP,
@@ -146,7 +146,7 @@ export default function SigninForm() {
             <Form {...form}>
               <form
                 onSubmit={form.handleSubmit(
-                  step === "form" ? handleRequestOtp : handleVerifyOtp
+                  step === "form" ? handleRequestOtp : handleVerifyOtp,
                 )}
                 className="space-y-6"
               >
