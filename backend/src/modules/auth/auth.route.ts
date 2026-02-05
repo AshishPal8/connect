@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
   checkUsernameExistsController,
+  googleAuthController,
   loginController,
   logoutController,
   registerController,
@@ -25,9 +26,10 @@ router.post("/login", validateRequest(loginSchema), loginController);
 router.post(
   "/verify-login",
   validateRequest(verifyOtpSchema),
-  verifyLoginController
+  verifyLoginController,
 );
 router.post("/resend", validateRequest(resendOtpSchema), resendOtpController);
+router.post("/google", googleAuthController);
 router.post("/logout", logoutController);
 
 export default router;

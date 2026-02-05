@@ -140,12 +140,12 @@ export default function Onboarding() {
 
       const response = await api.put("/user/update", payload);
 
-      const { data } = await response.data;
+      const data = await response.data;
 
-      if (response.status === 200) {
+      if (data.success) {
         toast.success("Login successfully");
         router.push("/");
-        setUser(data);
+        setUser(data.data);
       } else {
         toast.error(data.message || "Something went wrong");
       }
@@ -167,7 +167,7 @@ export default function Onboarding() {
   const toggleCategory = (categoryId: number) => {
     if (selectedCategories.includes(categoryId)) {
       setSelectedCategories(
-        selectedCategories.filter((id) => id !== categoryId)
+        selectedCategories.filter((id) => id !== categoryId),
       );
     } else {
       if (selectedCategories.length < 3) {
@@ -183,7 +183,7 @@ export default function Onboarding() {
     if (currentInterests.includes(interestId)) {
       form.setValue(
         "interests",
-        currentInterests.filter((id) => id !== interestId)
+        currentInterests.filter((id) => id !== interestId),
       );
     } else {
       form.setValue("interests", [...currentInterests, interestId]);
@@ -206,19 +206,19 @@ export default function Onboarding() {
                 <div
                   className={cn(
                     "w-20 h-[10px] rounded-full",
-                    step === "basic" ? "bg-primary" : "bg-gray-500"
+                    step === "basic" ? "bg-primary" : "bg-gray-500",
                   )}
                 />
                 <div
                   className={cn(
                     "w-20 h-[10px] rounded-full",
-                    step === "category" ? "bg-primary" : "bg-gray-500"
+                    step === "category" ? "bg-primary" : "bg-gray-500",
                   )}
                 />
                 <div
                   className={cn(
                     "w-20 h-[10px] rounded-full",
-                    step === "interest" ? "bg-primary" : "bg-gray-500"
+                    step === "interest" ? "bg-primary" : "bg-gray-500",
                   )}
                 />
               </div>
@@ -246,7 +246,7 @@ export default function Onboarding() {
                                   variant="outline"
                                   className={cn(
                                     "w-full pl-3 text-left font-normal",
-                                    !field.value && "text-muted-foreground"
+                                    !field.value && "text-muted-foreground",
                                   )}
                                 >
                                   {field.value ? (
@@ -333,7 +333,7 @@ export default function Onboarding() {
                             "h-auto py-4 rounded-md border duration-150 bg-secondary",
                             selectedCategories.includes(category.id)
                               ? "border-primary bg-primary/10 text-primary hover:bg-primary/10"
-                              : "border-neutral-300 text-foreground hover:bg-primary/10"
+                              : "border-neutral-300 text-foreground hover:bg-primary/10",
                           )}
                           onClick={() => toggleCategory(category.id)}
                         >
@@ -373,7 +373,7 @@ export default function Onboarding() {
                                     "h-auto py-4 rounded-md border duration-150 bg-secondary",
                                     field.value?.includes(interest.id)
                                       ? "border-primary bg-primary/10 text-primary hover:bg-primary/10"
-                                      : "border-neutral-300 text-foreground hover:bg-primary/10"
+                                      : "border-neutral-300 text-foreground hover:bg-primary/10",
                                   )}
                                   onClick={() => toggleInterest(interest.id)}
                                 >
@@ -419,8 +419,8 @@ export default function Onboarding() {
                       {step !== "interest"
                         ? "Next"
                         : isLoading
-                        ? "Saving..."
-                        : "Save"}
+                          ? "Saving..."
+                          : "Save"}
                     </Button>
                   </div>
                 </div>

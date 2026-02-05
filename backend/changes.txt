@@ -9,6 +9,14 @@
 
 7. need to add username in jwt token 
 8. update profile frontend right side of profile card scrolling.
+9. ✅Username not have special char and space only alphabet and number. -- frontend 
+10. otp input should be autofocus to first dont need to click -- frontend.
+11. ✅Onboarding screen issues.
+
+04-Feb-2026 - Wednesday
+12. ✅Profile Page update,
+12.1: Pofile page search category and interests and add 
+13. Meetup Schema, and crate meetup backend.
 
 profile status in user account if it not have interests then go onboarding or onboarded: true or false, then dont show that page.
 push code to github and make a url render and vercel.

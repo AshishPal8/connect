@@ -1,6 +1,7 @@
 import type { NextFunction, Request, Response } from "express";
 import {
   checkUsernameExistsService,
+  googleAuthService,
   loginService,
   registerService,
   resendOtpService,
@@ -13,7 +14,7 @@ import { clearAuthCookie, setAuthCookie } from "../../utils/auth";
 export const checkUsernameExistsController = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<void> => {
   try {
     const username = req.query.u as string;
@@ -32,7 +33,7 @@ export const checkUsernameExistsController = async (
 export const registerController = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<void> => {
   try {
     const user = await registerService(req.body);
@@ -46,7 +47,7 @@ export const registerController = async (
 export const verifyOtpController = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<void> => {
   try {
     const user = await verifyOtpService(req.body);
@@ -62,7 +63,7 @@ export const verifyOtpController = async (
 export const loginController = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<void> => {
   try {
     const user = await loginService(req.body);
@@ -76,7 +77,7 @@ export const loginController = async (
 export const verifyLoginController = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<void> => {
   try {
     const user = await verifyLoginOtpService(req.body);
@@ -92,7 +93,7 @@ export const verifyLoginController = async (
 export const resendOtpController = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<void> => {
   try {
     const otp = await resendOtpService(req.body);
@@ -103,10 +104,26 @@ export const resendOtpController = async (
   }
 };
 
+export const googleAuthController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> => {
+  try {
+    const user = await googleAuthService(req.body);
+
+    setAuthCookie(res, user.data.token);
+
+    res.status(200).json(user);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const logoutController = async (
   _req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<void> => {
   try {
     clearAuthCookie(res);

@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 import { requstLogger } from "./utils/logger";
 import { globalErrorHandler } from "./utils/error";
 
@@ -16,7 +17,7 @@ app.use(
   express.static(path.join(__dirname, "../assets"), {
     maxAge: "7d",
     etag: true,
-  })
+  }),
 );
 
 app.use(
@@ -24,9 +25,10 @@ app.use(
     origin: process.env.FRONTEND_URL,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     credentials: true,
-  })
+  }),
 );
 
+app.use(cookieParser());
 app.use(requstLogger);
 
 //hello there

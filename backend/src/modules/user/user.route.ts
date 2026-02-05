@@ -10,13 +10,13 @@ import { updateUserSchema } from "./user.schema";
 
 const router = Router();
 
-router.get("/me", authMiddleware, getUserController);
-router.get("/get/:username", getUserByUsernameController);
 router.put(
   "/update",
   authMiddleware,
-  // validateRequest(updateUserSchema),
-  updateUserController
+  validateRequest(updateUserSchema),
+  updateUserController,
 );
+router.get("/get/:username", getUserByUsernameController);
+router.get("/me", authMiddleware, getUserController);
 
 export default router;

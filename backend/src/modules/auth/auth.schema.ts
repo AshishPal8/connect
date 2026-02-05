@@ -19,7 +19,12 @@ export const resendOtpSchema = z.object({
   email: z.email(),
 });
 
+export const googleAuthSchema = z.object({
+  credential: z.string().min(1, "Google credential is required"),
+});
+
 export type registerInput = z.infer<typeof registerSchema>;
 export type verifyOtpInput = z.infer<typeof verifyOtpSchema>;
 export type loginInput = z.infer<typeof loginSchema>;
 export type resendOtpInput = z.infer<typeof resendOtpSchema>;
+export type googleAuthInput = z.infer<typeof googleAuthSchema>;

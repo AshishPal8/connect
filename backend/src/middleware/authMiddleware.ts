@@ -7,46 +7,45 @@ import { verifyToken } from "../utils/auth.ts";
 export const authMiddleware = (
   req: Request,
   res: Response,
-  next: NextFunction
-): Promise<void> => {
-  return new Promise((resolve, reject) => {
-    let token = req.cookies?.token;
+  next: NextFunction,
+): void => {
+  let token = req.cookies?.token;
 
-    if (!token && req.headers.authorization?.startsWith("Bearer")) {
-      token = req.headers.authorization.split(" ")[1];
-    }
+  if (!token && req.headers.authorization?.startsWith("Bearer")) {
+    token = req.headers.authorization.split(" ")[1];
+  }
 
-    if (!token) {
-      res.status(401).json({ message: "Unauthorized" });
-      return reject();
-    }
+  console.log("token", token);
 
-    // try {
-    //   const decoded = jwt.verify(token, jwtSecret);
+  if (!token) {
+    res.status(401).json({ message: "Unauthorized" });
+    return;
+  }
 
-    //   if (typeof decoded === "string" || !("id" in decoded)) {
-    //     throw new ForbiddenError("Invalid token payload");
-    //   }
+  // try {
+  //   const decoded = jwt.verify(token, jwtSecret);
 
-    //   req.user = {
-    //     id: decoded.id,
-    //     email: decoded.email,
-    //   };
+  //   if (typeof decoded === "string" || !("id" in decoded)) {
+  //     throw new ForbiddenError("Invalid token payload");
+  //   }
 
-    //   next();
-    //   resolve();
-    // } catch (error) {
-    //   res.status(400).json({ message: "Invalid or expired token" });
-    //   reject();
-    // }
+  //   req.user = {
+  //     id: decoded.id,
+  //     email: decoded.email,
+  //   };
 
-    const decoded = verifyToken(token);
-    if (!decoded) {
-      throw new ForbiddenError("Invalid or expired token");
-    }
+  //   next();
+  //   resolve();
+  // } catch (error) {
+  //   res.status(400).json({ message: "Invalid or expired token" });
+  //   reject();
+  // }
 
-    req.user = decoded;
-    next();
-    resolve();
-  });
+  const decoded = verifyToken(token);
+  if (!decoded) {
+    throw new ForbiddenError("Invalid or expired token");
+  }
+
+  req.user = decoded;
+  next();
 };

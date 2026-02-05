@@ -25,7 +25,7 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Separator } from "@/components/ui/separator";
-import OAuth from "@/components/auth/oauth";
+import OAuth from "@/components/auth/OAuth";
 import api from "@/lib/axios/client";
 import {
   InputOTP,
@@ -38,7 +38,13 @@ import { useDebounce } from "use-debounce";
 import { AlertCircle, CheckCircle, LoaderCircle } from "lucide-react";
 
 export const signupSchema = z.object({
-  username: z.string().min(1, { message: "username is required" }),
+  username: z
+    .string()
+    .min(3, "Username must be at least 3 characters")
+    .max(20, "Username must be less than 20 characters")
+    .regex(/^[a-zA-Z0-9_]+$/, "Only letters, numbers, and underscore allowed")
+    .toLowerCase(),
+
   name: z.string().min(1, { message: "Name is required" }),
   email: z.email({ message: "Enter a valid email" }),
   code: z.string().optional(),
@@ -74,7 +80,7 @@ export default function SignupForm() {
       setUsernameStatus({ checking: true, exists: null });
       try {
         const res = await api.post(
-          `/auth/check-username?u=${debouncedUsername}`
+          `/auth/check-username?u=${debouncedUsername}`,
         );
         const data = res.data;
 
@@ -122,13 +128,15 @@ export default function SignupForm() {
         code: values.code,
       });
 
-      const { data } = await response.data;
+      const data = await response.data?.data;
 
       if (response.status === 200) {
         toast.success("Signed up successfully");
-        router.push("/onboarding");
         setUser(data);
         setToken(data.token);
+        setTimeout(() => {
+          router.push("/onboarding");
+        }, 300);
       } else {
         toast.error(data.message || "Something went wrong");
       }
@@ -182,7 +190,7 @@ export default function SignupForm() {
             <Form {...form}>
               <form
                 onSubmit={form.handleSubmit(
-                  step === "form" ? handleRequestOtp : handleVerifyOtp
+                  step === "form" ? handleRequestOtp : handleVerifyOtp,
                 )}
                 className="space-y-6"
               >
@@ -198,6 +206,13 @@ export default function SignupForm() {
                             <Input
                               placeholder="Enter your username"
                               {...field}
+                              onChange={(e) => {
+                                const value = e.target.value.replace(
+                                  /[^a-zA-Z0-9_]/g,
+                                  "",
+                                );
+                                field.onChange(value.toLowerCase());
+                              }}
                             />
                           </FormControl>
                           {username && username.length >= 3 && (

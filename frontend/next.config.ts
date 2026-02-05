@@ -9,6 +9,12 @@ const nextConfig: NextConfig = {
         port: "4000",
         pathname: "/assets/*/**",
       },
+      {
+        protocol: "https",
+        hostname: "*.googleusercontent.com",
+        port: "",
+        pathname: "**",
+      },
     ],
   },
 };

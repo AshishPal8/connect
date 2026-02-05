@@ -22,13 +22,14 @@ export const updateUserSchema = z.object({
     .optional(),
   profilePicture: z.preprocess(
     (val) => (val === "" ? undefined : val),
-    z.url().optional()
+    z.url().optional(),
   ),
   dob: coerceToDate.optional(),
   gender: genderEnum.optional(),
   isOnboarded: z.boolean().default(false),
   bio: z.string().max(2000).optional(),
   interests: z.array(interestId).max(200).optional(),
+  location: z.string().optional(),
   socials: z
     .array(
       z.object({
@@ -36,7 +37,7 @@ export const updateUserSchema = z.object({
         url: z
           .url({ error: "Invalid url format" })
           .max(500, { error: "URL to long" }),
-      })
+      }),
     )
     .optional(),
 });

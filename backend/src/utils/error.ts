@@ -4,7 +4,7 @@ import type { Request, Response, NextFunction } from "express";
 export class AppError extends Error {
   constructor(
     public statusCode: number,
-    message: string
+    message: string,
   ) {
     super(message);
     Error.captureStackTrace(this, this.constructor);
@@ -19,10 +19,21 @@ export const errorHandler = (statusCode: number, message: string): AppError => {
 // -------------------- Global Error Handler --------------------
 export const globalErrorHandler = (
   err: AppError | Error,
-  _req: Request,
+  req: Request,
   res: Response,
-  _next: NextFunction
+  _next: NextFunction,
 ) => {
+  console.log(
+    "🔴 [ERROR HANDLER] Called — headersSent:",
+    res.headersSent,
+    "url:",
+    req.url,
+  );
+
+  if (res.headersSent) {
+    console.log("🔴 [ERROR HANDLER] SKIPPED — headers already sent");
+    return;
+  }
   const statusCode = err instanceof AppError ? err.statusCode : 500;
   const message = err.message || "Something went wrong";
 
