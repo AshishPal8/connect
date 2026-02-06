@@ -4,7 +4,7 @@
     "": {
       "name": "backend",
       "dependencies": {
-        "@prisma/client": "^6.17.1",
+        "@prisma/client": "6.17.1",
         "@types/jsonwebtoken": "^9.0.10",
         "axios": "^1.13.4",
         "bcryptjs": "^3.0.2",
@@ -24,7 +24,7 @@
         "@types/express": "^5.0.3",
         "@types/node": "^24.8.1",
         "nodemon": "^3.1.10",
-        "prisma": "^6.17.1",
+        "prisma": "6.17.1",
       },
       "peerDependencies": {
         "typescript": "^5",
