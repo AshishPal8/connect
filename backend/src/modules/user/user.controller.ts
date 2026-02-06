@@ -32,7 +32,7 @@ export const getUserByUsernameController = async (
 ): Promise<void> => {
   try {
     const username = req.params?.username;
-    if (!username) {
+    if (!username || typeof username !== "string") {
       throw new BadRequestError("username is required!");
     }
     const user = await getUserByUsernameService(username);
@@ -49,7 +49,6 @@ export const updateUserController = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    console.log("Hello thhere");
     const userId = req.user?.id;
     if (!userId) {
       throw new UnauthorizedError("Unauthorized");
