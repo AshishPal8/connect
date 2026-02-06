@@ -3,7 +3,7 @@ import type { NextRequest } from "next/server";
 import { getRouteType } from "./lib/routeAccess";
 import { decodeToken } from "./lib/jwt";
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   const token = request.cookies.get("token")?.value;
